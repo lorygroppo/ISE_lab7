@@ -7,8 +7,8 @@ try: #provo a importare il modulo 'serial'
     import serial.tools.list_ports
 except: #se non installato viene chiesto all'utente se desidera installarlo
     consenso=input("Impossibile importare il modulo 'serial'. Si desidera installarlo [s/n]? ").upper()
-    while (consenso!="s" and consenso!="n"):
-        consenso=input("Input non valido. Si desidera installarlo [s/n]? ").upper()
+    while (consenso!="S" and consenso!="N"):
+        consenso=input("Input non valido. Si desidera installarlo [S/N]? ").upper()
     if consenso=="S":
         import os
         import subprocess
@@ -17,14 +17,17 @@ except: #se non installato viene chiesto all'utente se desidera installarlo
         elif sys.platform.startswith('linux'): #installazione per piattaforma linux
             try:
                 process=subprocess.call(("sudo -H -S python3 -m pip install pyserial").split(" "))
+                import serial                   
+                import serial.tools.list_ports
             except:
                 try:
                     process=subprocess.call(("sudo -H -S apt-get install python3-pip").split(" "))
                     process=subprocess.call(("sudo -H -S python3 -m pip install pyserial").split(" "))
+                    import serial                   
+                    import serial.tools.list_ports
                 except:
+                    print("Impossibile importare il modulo 'serial'. Installarlo manualmente.")
                     exit()
-        import serial                   
-        import serial.tools.list_ports
     elif consenso=="N":
         print("Impossibile proseguire con l'esecuzione.")
         exit()
@@ -38,8 +41,7 @@ def calc_avg(new_value): #calcola la media dei tempi di reazione della sessione
 
 def check_best(new_value): #verifica se e' stato battuto il record della sessione
     global best_time
-    if new_value<best_time:
-        best_time=new_value
+    if new_value<best_time: best_time=new_value
     return best_time
 
 def send_command(command): #se e' consentito, invia il comando sulla seriale
@@ -57,7 +59,7 @@ def send_command(command): #se e' consentito, invia il comando sulla seriale
 
 def read_time():
     global wait_start_flag, modalita
-    try: #aspetta da serile 5 caratteri, se non arrivano entro i 70s impostati da timeout, va in except
+    try: #aspetta da seriale 5 caratteri, se non arrivano entro i 70s impostati da timeout, va in except
         elapsed_time=ser.read(5).decode('ascii')    
         if elapsed_time[0]=="T": #controlla che il primo carattere sia una T
             elapsed_time=float(int(elapsed_time[1:5],16)/1000) #converte la stringa HEX (ms) in DEC (s)
@@ -82,10 +84,8 @@ def read_time():
         elif modalita=="T": print(msg) 
     wait_start_flag=False #puo' avvenire un nuovo invio
     #riabilita il pulsante non premuto in precedenza
-    if last_command==0 and modalita=="G":
-        on_button['state']='normal'
-    elif last_command==1 and modalita=="G":
-        off_button['state']='normal'
+    if last_command==0 and modalita=="G": on_button['state']='normal'
+    elif last_command==1 and modalita=="G": off_button['state']='normal'
 
 def inizializza_seriale(port): #apre la comunicazione seriale
     global ser
@@ -141,10 +141,8 @@ if modalita=="T":
         if comando=="q":
             ser.close()
             exit()
-        elif (comando=="L 0" or comando=="L 1"):
-            send_command(comando)
-        else:
-            print("Comando non valido")
+        elif (comando=="L 0" or comando=="L 1"): send_command(comando)
+        else: print("Comando non valido")
             
 elif modalita=="G":
     def clear_log(*args): #funzione per pulire il messaggio di log sulla GUI
