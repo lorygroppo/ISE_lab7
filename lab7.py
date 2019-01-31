@@ -28,6 +28,14 @@ except: #se non installato viene chiesto all'utente se desidera installarlo
                 except:
                     print("Impossibile importare il modulo 'serial'. Installarlo manualmente.")
                     exit()
+        elif sys.platform.startswith('darwin'):#installazione per piattaforma OS X
+            print("arriva qui")
+            try:
+                process=subprocess.call(("python3 -m pip install pyserial").split(" "))
+                import serial
+                import serial.tools.list_ports
+            except:
+                print("non va")
     elif consenso=="N":
         print("Impossibile proseguire con l'esecuzione.")
         exit()
