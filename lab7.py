@@ -26,19 +26,17 @@ except: #se non installato viene chiesto all'utente se desidera installarlo
                     import serial                   
                     import serial.tools.list_ports
                 except:
-                    print("Impossibile importare il modulo 'serial'. Installarlo manualmente.")
-                    exit()
-        elif sys.platform.startswith('darwin'):#installazione per piattaforma OS X
+                    exit("Impossibile importare il modulo 'serial'. Installarlo manualmente.")
+        elif sys.platform.startswith('darwin'): #installazione per piattaforma Mac OS X
             print("arriva qui")
             try:
                 process=subprocess.call(("python3 -m pip install pyserial").split(" "))
                 import serial
                 import serial.tools.list_ports
             except:
-                print("non va")
+                exit("Impossibile importare il modulo 'serial'. Installarlo manualmente.")
     elif consenso=="N":
-        print("Impossibile proseguire con l'esecuzione.")
-        exit()
+        exit("Impossibile proseguire con l'esecuzione.")
 
 def calc_avg(new_value): #calcola la media dei tempi di reazione della sessione
     global prove_effettuate, media
@@ -135,9 +133,7 @@ if len(comport)>0:
         if modalita=="T":
             print("[%d]:" % (i),el.device)
             i=i+1
-else:
-    print("Non ci sono porte seriali disponibili. Connettere la NUCLEO e riavviare il programma.")
-    exit()
+else: exit("Non ci sono porte seriali disponibili. Connettere la NUCLEO e riavviare il programma.")
 
 if modalita=="T":
     port_select=input("Selezionare una delle porte elencate [N]: ") #selezione della porta seriale
